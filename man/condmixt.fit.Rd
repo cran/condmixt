@@ -20,8 +20,10 @@ given data set.
 }
 \usage{
 condhparetomixt.fit(theta, h, m, x, y, ...)
-condhparetomixt.fit.tailpen(theta,h,m,x,y,lambda=0,w=0.2,beta=50,mu=0.2,sigma=0.2, ...)
-condhparetomixt.dirac.fit.tailpen(theta,h,m,x,y,lambda=0,w=0.2,beta=50,mu=0.2,sigma=0.2, ...)
+condhparetomixt.fit.tailpen(theta,h,m,x,y,lambda=0,w=0.2,beta=50,
+                            mu=0.2,sigma=0.2, ...)
+condhparetomixt.dirac.fit.tailpen(theta,h,m,x,y,lambda=0,w=0.2,beta=50,
+                                  mu=0.2,sigma=0.2, ...)
 condhparetomixt.dirac.fit(theta,h,m,x,y, ...)
 condgaussmixt.fit(theta,h,m,x,y, ...)
 condgaussmixt.dirac.fit(theta,h,m,x,y, ...)

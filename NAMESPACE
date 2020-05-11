@@ -97,3 +97,9 @@ export(softplus,
 
 
 useDynLib(condmixt)
+
+importFrom("stats", "dgamma", "dlnorm", "dnorm", "kmeans", "mad",
+           "nlm", "pnorm", "qgamma", "qnorm", "quantile", "runif",
+           "sd", "var")
+
+import("evd")

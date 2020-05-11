@@ -43,23 +43,23 @@ void lambertwR(double *z, double *w0){
 /* Complementary error function */
 double erfc(double x){
   double t,z,ans;
-  z=fabs(x); 
-  t=1.0/(1.0+0.5*z); 
-  ans=t*exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+ 
+  z=fabs(x);
+  t=1.0/(1.0+0.5*z);
+  ans=t*exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+
        t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+
-      	t*(-0.82215223+t*0.17087277))))))))); 
-	return x>= 0.0 ? ans : 2.0-ans; 		  
+      	t*(-0.82215223+t*0.17087277)))))))));
+	return x>= 0.0 ? ans : 2.0-ans;
 }
 
 /* Error function */
 double erf(double x){
   double t,z,ans;
-  z=fabs(x); 
-  t=1.0/(1.0+0.5*z); 
-  ans=t*exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+ 
+  z=fabs(x);
+  t=1.0/(1.0+0.5*z);
+  ans=t*exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+
        t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+
-      	t*(-0.82215223+t*0.17087277))))))))); 
-  return x>= 0.0 ? 1.0-ans : ans-1.0; 		  
+      	t*(-0.82215223+t*0.17087277)))))))));
+  return x>= 0.0 ? 1.0-ans : ans-1.0;
 }
 
 /* Sign function */
@@ -71,7 +71,7 @@ double sign(double x){
     if (x < 0.0)
       y = -1.0;
     else
-      y = 0.0;		
+      y = 0.0;
   }
   return(y);
 }
@@ -95,8 +95,8 @@ void hpnll(double *theta, double *x, int *n, double *nll, double *nllgrad){
   nllgrad[0]=0;
   nllgrad[1]=0;
   nllgrad[2]=0;
-  
-    
+
+
   /* Compute partial derivatives that do not depend on data points:
      derivatives of gamma, beta and alpha with respect to xi, mu, sigma */
   dgdx=(exp(-w/2.0) * sqrt(w/(2.0*PI))) / (fabs(1.0 + xi) * (1.0 + w));
@@ -104,7 +104,7 @@ void hpnll(double *theta, double *x, int *n, double *nll, double *nllgrad){
   dbds=fabs(1.0 + xi) / sqrt(w);
   dadx=sigma * sqrt(w) / (fabs(1.0 + xi) * (1.0 + w));
   dads=sign(1.0 + xi) * sqrt(w);
- 
+
 
   for (i=0; i<*n; i++){
 
@@ -114,7 +114,7 @@ void hpnll(double *theta, double *x, int *n, double *nll, double *nllgrad){
 	nllgrad[0]+=dgdx/gamma;
 	nllgrad[1]+=-(x[i]-mu)/(sigma*sigma);
 	nllgrad[2]+=1.0-(x[i]-mu)*(x[i]-mu)/(sigma*sigma);
-    } 
+    }
     else {
       beta = sigma*fabs(1.0+xi)/sqrt(w);
       if (xi == 0.0){
@@ -125,14 +125,14 @@ void hpnll(double *theta, double *x, int *n, double *nll, double *nllgrad){
       }
       else if (xi > 0.0 || (xi < 0.0 && (x[i] < alpha - beta/xi))){
 	  *nll+=log(gamma*beta)+(1.0/xi + 1.0)*log(1.0+xi*(x[i]-alpha)/beta);
-	  nllgrad[0]+=dgdx/gamma + dbdx/beta * 
-	    (1.0-(xi+1.0)*(x[i]-alpha)/(beta+xi*(x[i]-alpha))) - 
-	    log(1.0+xi*(x[i]-alpha)/beta)/(xi*xi) + 
+	  nllgrad[0]+=dgdx/gamma + dbdx/beta *
+	    (1.0-(xi+1.0)*(x[i]-alpha)/(beta+xi*(x[i]-alpha))) -
+	    log(1.0+xi*(x[i]-alpha)/beta)/(xi*xi) +
 	    (1.0+1.0/xi)*(x[i]-alpha)/(beta+xi*(x[i]-alpha)) -
 	    (1.0+xi)/(beta+xi*(x[i]-alpha))*dadx;
 	  nllgrad[1]+=-(1.0+xi)/(beta+xi*(x[i]-alpha));
-	  nllgrad[2]+=(dbds/beta * 
-		       (1.0-(xi+1.0)*(x[i]-alpha)/(beta+xi*(x[i]-alpha))) - 
+	  nllgrad[2]+=(dbds/beta *
+		       (1.0-(xi+1.0)*(x[i]-alpha)/(beta+xi*(x[i]-alpha))) -
 		       (xi+1.0)/(beta+xi*(x[i]-alpha)) * dads)*sigma;
       }
       else{
@@ -204,7 +204,7 @@ double gpdlogpdf(double xi, double beta, double x){
 /* Hybrid Pareto density h(x; xi, mu, sigma) evaluated at one point. */
 double hpdf(double xi, double mu, double sigma, double x){
   double w, gamma, beta, alpha,y;
-  
+
   w = lambertw((1.0 + xi)*(1.0 + xi)/(2.0*PI));
   alpha = sign(1.0+xi) * sigma * sqrt(w) + mu;
   gamma = 3.0/2.0 + erf(sign(1.0+xi)*sqrt(w/2.0))/2.0;
@@ -214,9 +214,9 @@ double hpdf(double xi, double mu, double sigma, double x){
   }
   else{
     beta = sigma*fabs(1.0+xi)/sqrt(w);
-    y=gpdpdf(xi, beta, x-alpha)/gamma;    
+    y=gpdpdf(xi, beta, x-alpha)/gamma;
   }
-  
+
   return(y);
 }
 
@@ -224,11 +224,11 @@ double hpdf(double xi, double mu, double sigma, double x){
 /* Hybrid Pareto cdf h(x; xi, mu, sigma) evaluated at one point. */
 double hcdf(double xi, double mu, double sigma, double x){
   double w, gamma, beta, alpha,y;
-  
+
   w = lambertw((1.0 + xi)*(1.0 + xi)/(2.0*PI));
   gamma = 3.0/2.0 + erf(sign(1.0+xi)*sqrt(w/2.0))/2.0;
   alpha = sign(1.0+xi) * sigma * sqrt(w) + mu;
-  
+
   if (x <= alpha){
     y=normcdf(mu, sigma, x)/gamma;
   }
@@ -236,28 +236,28 @@ double hcdf(double xi, double mu, double sigma, double x){
     beta = sigma*fabs(1.0+xi)/sqrt(w);
     if (xi == 0.0)
       y=(normcdf(mu,sigma,alpha)+1.0-exp(-(x-alpha)/beta))/gamma;
-    else 
+    else
       y=(normcdf(mu,sigma,alpha)+1.0-pow(1.0+xi*(x-alpha)/beta,-1/xi))/gamma;
   }
-  
+
   return(y);
 }
 
-/* Logarithm of the Hybrid Pareto density h(x; xi, mu, sigma) 
-   evaluated at one point. */ 
+/* Logarithm of the Hybrid Pareto density h(x; xi, mu, sigma)
+   evaluated at one point. */
 double hlogpdf(double xi, double mu, double sigma, double x){
   double w, gamma, beta, alpha,y;
-  
+
   w = lambertw((1.0 + xi)*(1.0 + xi)/(2.0*PI));
   gamma = 3.0/2.0 + erf(sign(1.0+xi)*sqrt(w/2.0))/2.0;
   alpha = sign(1.0+xi) * sigma * sqrt(w) + mu;
-  
+
   if (x <= alpha){
     y=normlogpdf(mu, sigma, x)-log(gamma);
   }
   else{
     beta = sigma*fabs(1.0+xi)/sqrt(w);
-    y=gpdlogpdf(xi, beta, x-alpha)-log(gamma);    
+    y=gpdlogpdf(xi, beta, x-alpha)-log(gamma);
   }
   return(y);
 }
@@ -279,7 +279,7 @@ double softplus(double x){
   }
   else {
     y= log(1.0+exp(x));
-    if (!finite(y) | isnan(y))
+    if (!isfinite(y) || isnan(y))
       y=0.0;
   }
   return(y);
@@ -290,7 +290,7 @@ double softplusinv(double x){
   double y;
   if(x>0.0){
     y = exp(x);
-    if (isfinite(y) & !isnan(y))
+    if (isfinite(y) && !isnan(y))
       y=log(y-1.0);
     else
       y=x;
@@ -311,7 +311,7 @@ void ummhfwd(double *theta, int *m, double *params){
   for(i=*m-1;i>-1;i--){
     if(i>0){
       /* priors in [0,1] */
-      params[i]=(1/(1+exp(-theta[4*i-1]))*(1.0-2*MINPI)+MINPI)*fprior;       
+      params[i]=(1/(1+exp(-theta[4*i-1]))*(1.0-2*MINPI)+MINPI)*fprior;
       fprior=fprior-params[i];
     }
     else
@@ -349,7 +349,7 @@ void ummhprint(double *params, int *m){
   int j;
   /* double *params;
   params = (double*) R_alloc(4**m, sizeof(double));
-  
+
   ummhfwd(theta,m,params);*/
 
   for (j=0; j<*m; j++){
@@ -365,10 +365,10 @@ double ummhpdf(double *params, int m, double x){
   int j;
   double act,prob=0.0;;
 
-  for(j=0; j<m; j++){     
+  for(j=0; j<m; j++){
     act=hpdf(params[m+j],params[2*m+j],params[3*m+j],x);
     prob+=params[j]*act;
-  }		
+  }
 
   return(prob);
 }
@@ -388,10 +388,10 @@ double ummhcdf(double *params, int m, double x){
   int j;
   double act,prob=0.0;
 
-  for(j=0; j<m; j++){     
+  for(j=0; j<m; j++){
     act=hcdf(params[m+j],params[2*m+j],params[3*m+j],x);
     prob+=params[j]*act;
-  }		
+  }
   return(prob);
 }
 
@@ -404,20 +404,20 @@ void ummhcdfR(double *params, int *m, double *x, int *n, double *p){
     p[i]=ummhcdf(params,*m,x[i]);
 }
 
-/* Derivative of the hybrid Pareto pdf with respect to xi, mu and sigma 
+/* Derivative of the hybrid Pareto pdf with respect to xi, mu and sigma
    divided by the pdf: dhdxi/h */
 void hpdfgrad(double xi, double mu, double sigma, double x,
 	      double *dhdtheta){
   double w, gamma, alpha, beta, dh2dgdxi, dh2dgdbeta, dh2dgdalpha;
-  
+
   w = lambertw((1.0 + xi)*(1.0 + xi)/(2.0*PI));
   gamma = 3.0/2.0 + erf(sign(1.0+xi)*sqrt(w/2.0))/2.0;
   alpha = sign(1.0+xi) * sigma * sqrt(w) + mu;
-  
+
   /* Derivative with respect to xi, mu and sigma through gamma: dhdgammadxi. */
   dhdtheta[0] = -sqrt(w)*sign(1.0+xi)/
     (gamma*sqrt(2.0*PI)*exp(w/2.0)*(1.0+w)*(1.0+xi));	     /* dhdxi */
-    
+
   if (x <= alpha){
     /* Derivative only depends on the Normal pdf */
     dhdtheta[1] = (x-mu)/ (sigma*sigma);			    /* dhdmu */
@@ -452,20 +452,20 @@ void hpdfgrad(double xi, double mu, double sigma, double x,
 
 
 /* Hybrid Pareto mixture negative log-likelihood at n points*/
-void ummhnll(double *theta, int *m, double *x, int *n, double *nll, 
+void ummhnll(double *theta, int *m, double *x, int *n, double *nll,
 	       double *nllgrad){
   int i,j,nparams=4**m-1;
   double *params, *act, *post, *dhdtheta;
-  double lprob,ppost,pprior,lprior; 
-  
-  
+  double lprob,ppost,pprior,lprior;
+
+
   /* Allocate memory for pointers. */
   params = (double*) R_alloc(4**m, sizeof(double));
   act = (double*) R_alloc(*m, sizeof(double));
   post = (double*) R_alloc(*m, sizeof(double));
   dhdtheta = (double*) R_alloc(3, sizeof(double));
-  
-	
+
+
   /* Make sure initialization of neg-log-like and its gradient
      is zero */
   *nll=0.0;
@@ -473,7 +473,7 @@ void ummhnll(double *theta, int *m, double *x, int *n, double *nll,
     nllgrad[j]=0;
 
 
-  /* Compute mixture parameters from vector theta */  
+  /* Compute mixture parameters from vector theta */
   ummhfwd(theta,m,params);
 
   for (i=0; i<*n; i++){
@@ -508,26 +508,26 @@ void ummhnll(double *theta, int *m, double *x, int *n, double *nll,
 	  lprior+=pprior;
 	}
       }
-      else 
+      else
 	post[j]=lprior+act[j];
-      
+
       if (lprob > post[j])
 	lprob=lprob + log(1+exp(post[j]-lprob));
       else
-	lprob=post[j] + log(1+exp(lprob-post[j]));            
+	lprob=post[j] + log(1+exp(lprob-post[j]));
     } /* for j */
- 
+
     *nll -= lprob;
-    
+
     /* Compute gradient for pattern i */
     ppost=0.0; /* Maintains \sum_{i=0}^{j-1} post[i] */
     pprior=0.0; /* Maintains \sum_{i=0}^{j-1} params[i] */
     for (j=0; j<*m; j++){
       /* Compute deltas for priors */
       post[j]=exp(post[j]-lprob); /* posterior */
-      
+
       if(j > 0){ /* there are m-1 priors */
-	ppost+=post[j-1];	
+	ppost+=post[j-1];
 	nllgrad[4*j-1] += (params[j]*ppost-pprior*post[j])/
 	  (pprior+params[j])*(1.0-2*MINPI);
       }
@@ -547,27 +547,27 @@ void ummhnll(double *theta, int *m, double *x, int *n, double *nll,
 	*(1-exp(MINSIGMA-params[3**m+j]));	   /* sigma_j */
     } /* for j loop */
   } /* for i loop */
-  
+
 }
 
 
 
 /* Hybrid Pareto mixture negative log-likelihood at n points with a penalty on the tail indexes based on a mixture (an exponential and a gaussian) with two modes: at zero and at 0.5 */
 void ummhnll_bimodal_tailpen(double *theta, int *m, double * lambda, double *w,
-			     double * beta, double *mu, double *sigma, double *x, int *n, 
+			     double * beta, double *mu, double *sigma, double *x, int *n,
 			     double *nll,double *nllgrad){
-			      			     
+
   int i,j,nparams=4**m-1;
   double *params, *act, *post, *dhdtheta;
-  double lprob,ppost,pprior,lprior,tailpen,loga,logb; 
-  
-  
+  double lprob,ppost,pprior,lprior,tailpen,loga,logb;
+
+
   /* Allocate memory for pointers. */
   params = (double*) R_alloc(4**m, sizeof(double));
   act = (double*) R_alloc(*m, sizeof(double));
   post = (double*) R_alloc(*m, sizeof(double));
   dhdtheta = (double*) R_alloc(3, sizeof(double));
-	
+
   /* Make sure initialization of neg-log-like and its gradient
      is zero */
   *nll=0.0;
@@ -575,7 +575,7 @@ void ummhnll_bimodal_tailpen(double *theta, int *m, double * lambda, double *w,
     nllgrad[j]=0;
 
 
-  /* Compute mixture parameters from vector theta */  
+  /* Compute mixture parameters from vector theta */
   ummhfwd(theta,m,params);
 
   for (i=0; i<*n; i++){
@@ -610,17 +610,17 @@ void ummhnll_bimodal_tailpen(double *theta, int *m, double * lambda, double *w,
 	  lprior+=pprior;
 	}
       }
-      else 
+      else
 	post[j]=lprior+act[j];
-      
+
       if (lprob > post[j])
 	lprob=lprob + log(1+exp(post[j]-lprob));
       else
-	lprob=post[j] + log(1+exp(lprob-post[j]));            
+	lprob=post[j] + log(1+exp(lprob-post[j]));
     } /* for j */
- 
+
     *nll -= lprob;
-    
+
     /* Compute gradient for pattern i */
     ppost=0.0; /* Maintains \sum_{i=0}^{j-1} post[i] */
     pprior=0.0; /* Maintains \sum_{i=0}^{j-1} params[i] */
@@ -629,9 +629,9 @@ void ummhnll_bimodal_tailpen(double *theta, int *m, double * lambda, double *w,
       post[j]=exp(post[j]-lprob); /* posterior */
 
       /* Rprintf("priors[%d] = %e \n",j+1,params[j]);*/
-      
+
       if(j > 0){ /* there are m-1 priors */
-	ppost+=post[j-1];	
+	ppost+=post[j-1];
 	nllgrad[4*j-1] += (params[j]*ppost-pprior*post[j])/
 	  (pprior+params[j])*(1.0-2*MINPI);
       }
@@ -641,7 +641,7 @@ void ummhnll_bimodal_tailpen(double *theta, int *m, double * lambda, double *w,
       hpdfgrad(params[*m+j], params[2**m+j],params[3**m+j],
 	       x[i],dhdtheta);
 
-      /* Compute gradients for hybrid Pareto parameters */     
+      /* Compute gradients for hybrid Pareto parameters */
       nllgrad[4*j] += - post[j] *dhdtheta[0]*
 	(1-exp(MINXI-params[*m+j]));   /* xi_j */
       /* deltas[4*j] = - post[j] *dhdtheta[0]*params[net->m+j]*
@@ -658,7 +658,7 @@ void ummhnll_bimodal_tailpen(double *theta, int *m, double * lambda, double *w,
     logb=log(1-*w)-(params[*m+j]-*mu)*(params[*m+j]-*mu)/(2**sigma**sigma) - log(2*PI)/2.0 - log(*sigma);
     *nll -= *lambda*(loga + log(1 + exp(logb-loga)));
     tailpen= *beta + ((params[*m+j]-*mu)/(*sigma**sigma)-*beta)/(exp(loga-logb)+1);
-    nllgrad[4*j] += *lambda*tailpen*(1-exp(MINXI-params[*m+j])); 
+    nllgrad[4*j] += *lambda*tailpen*(1-exp(MINXI-params[*m+j]));
   }
 
 
@@ -669,13 +669,13 @@ void ummhnll_bimodal_tailpen(double *theta, int *m, double * lambda, double *w,
 
 /* --------------------- UMM : Quantile computations  ----------------------*/
 
-/* Bracket the quantile of level q in interval [a,b] given an initial 
+/* Bracket the quantile of level q in interval [a,b] given an initial
    interval and the cdf of UMM. */
 int ummqbrack(double (*cdf)(double *,int, double),
 	      double *params, int m, double q, double *a, double *b){
   int j;
   double fa,fb;
-  
+
   fa= (*cdf)(params,m,*a)-q;
   fb=(*cdf)(params,m,*b)-q;
 
@@ -703,8 +703,8 @@ int ummqbrack(double (*cdf)(double *,int, double),
 void ummquant(double (*cdf)(double *,int, double),
 	       double (*pdf)(double *,int, double),
 	       double *params, int m, double q, double *aa, double *bb,
-	       double tol, int itmax, double *xq){ 
-  
+	       double tol, int itmax, double *xq){
+
   int j, brack;
   double xqi, fa,fq,a,b;
 
@@ -757,10 +757,10 @@ double ummgpdf(double *params, int m, double x){
   int j;
   double act,prob=0.0;
 
-  for(j=0; j<m; j++){     
+  for(j=0; j<m; j++){
     act=normpdf(params[m+j],params[2*m+j],x);
     prob+=params[j]*act;
-  }		
+  }
 
   return(prob);
 }
@@ -779,10 +779,10 @@ double ummgcdf(double *params, int m, double x){
   int j;
   double act,prob=0.0;
 
-  for(j=0; j<m; j++){     
+  for(j=0; j<m; j++){
     act=normcdf(params[m+j],params[2*m+j],x);
     prob+=params[j]*act;
-  }		
+  }
   return(prob);
 }
 
@@ -829,18 +829,18 @@ void cmmhprint(double *params,int *d,int *h,int *m){
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+4*net.m;
-    }        
+    }
   }
   cmmprint(&net);
 
-  /* Change the value of the CMM weights 
+  /* Change the value of the CMM weights
   int nparams=net.nout*(net.d+1)+net.h*(1+net.d+net.nout);
   for (l=0;l<nparams;l++)
     net.psi[l]=l;
@@ -854,7 +854,7 @@ void cmmhprint(double *params,int *d,int *h,int *m){
     int j;
     double **ptr,**endptr;
     double *ptrlin, *endptrlin;
-    
+
     Rprintf("Dimension of input = %d\n", net->d);
     Rprintf("Number of hidden units = %d\n",net->h);
     Rprintf("Number of components = %d\n",net->m);
@@ -862,14 +862,14 @@ void cmmhprint(double *params,int *d,int *h,int *m){
       Rprintf("Number of reverse components = %d\n",net->s);
     Rprintf("Number of nn output = %d\n",net->nout);
     Rprintf("Linear weights :\n");
-    
+
     endptrlin=net->psi+net->nout*(net->d+1);
     j=1;
     for(ptrlin=net->psi;ptrlin<endptrlin;ptrlin++){
       Rprintf("%d : %f\n",j,*ptrlin);
       j++;
     }
-    
+
   if(net->h > 0){
     Rprintf("Non-linear weights :\n");
     endptr=net->theta+net->h;
@@ -933,7 +933,7 @@ void nnlin(CMM *net, double *x, double *a, double *z){
 
 
 /* Forward propagation through a conditional mixture of hybrid Paretos:
-   prior of the first component determined from the remaining priors. 
+   prior of the first component determined from the remaining priors.
    The priors are constrained to lie in the interval [MINPI, 1-MINPI]
    to ease computations. */
 void cmmhfwd(CMM *net, double *x, double *params, double *a, double *z){
@@ -941,13 +941,13 @@ void cmmhfwd(CMM *net, double *x, double *params, double *a, double *z){
   double fprior=1.0;
 
   /* Propagate forward  through nn */
-  nnlin(net, x, a, z);  
+  nnlin(net, x, a, z);
 
   /* Apply transfer functions to nn outputs. */
   for(i=net->m-1;i>-1;i--){
     if(i>0){
       /* priors in [0,1] */
-      params[i]=(1.0/(1.0+exp(-a[4*i-1]))*(1.0-2.0*MINPI)+MINPI)*fprior;  
+      params[i]=(1.0/(1.0+exp(-a[4*i-1]))*(1.0-2.0*MINPI)+MINPI)*fprior;
       fprior=fprior-params[i];
     }
     else
@@ -963,7 +963,7 @@ void cmmhfwd(CMM *net, double *x, double *params, double *a, double *z){
 
 
 /* Hybrid Pareto conditional mixture negative log-likelihood at n points*/
-void cmmhnll(CMM *net, double *x, double *y, int n, 
+void cmmhnll(CMM *net, double *x, double *y, int n,
 	       double *nll, double *nllgrad){
   double *params, *a, *z, *act, *post, *deltas, *dhdtheta, *dldz;
   int i,j,k,nparams=net->nout*(net->d+1)+net->h*(1+net->d+net->nout);
@@ -1025,13 +1025,13 @@ void cmmhnll(CMM *net, double *x, double *y, int n,
 	    lprior+=pprior;
 	  }
 	}
-	else 
+	else
 	  post[j]=lprior+act[j];
-	
+
 	if (lprob > post[j])
 	  lprob=lprob + log(1+exp(post[j]-lprob));
 	else
-	  lprob=post[j] + log(1+exp(lprob-post[j]));            
+	  lprob=post[j] + log(1+exp(lprob-post[j]));
       } /* for j */
 
     }
@@ -1039,8 +1039,8 @@ void cmmhnll(CMM *net, double *x, double *y, int n,
       post[0] = act[0];
       lprob=act[0];
     }
-    
-    
+
+
     *nll -= lprob;
 
 
@@ -1050,18 +1050,18 @@ void cmmhnll(CMM *net, double *x, double *y, int n,
     for (j=0; j<net->m; j++){
       /* Compute deltas for priors */
       post[j]=exp(post[j]-lprob); /* posterior */
-      
+
       if(j > 0){ /* there are m-1 priors */
-	ppost+=post[j-1];	
+	ppost+=post[j-1];
 	deltas[4*j-1] = (params[j]*ppost-pprior*post[j])/
 	  (pprior+params[j])*(1.0-2.0*MINPI);
       }
       pprior+=params[j];
-      
+
       /* Gradient w/r to the hybrid Pareto parameters */
       hpdfgrad(params[net->m+j], params[2*net->m+j],
 	       params[3*net->m+j], y[i],dhdtheta);
-      
+
       /* Compute deltas for hybrid Pareto parameters */
       deltas[4*j] = - post[j] *dhdtheta[0]*
 	(1-exp(MINXI-params[net->m+j]));   /* xi_j */
@@ -1069,8 +1069,8 @@ void cmmhnll(CMM *net, double *x, double *y, int n,
       deltas[4*j+2] = - post[j] * dhdtheta[2]
 	*(1-exp(MINSIGMA-params[3*net->m+j]));	   /* sigma_j */
     } /* for j loop */
-    
-    
+
+
       /* Compute gradient with respect to nn parameters */
     endptrlin=nllgrad+net->nout*(net->d+1);
     j=0;
@@ -1086,8 +1086,8 @@ void cmmhnll(CMM *net, double *x, double *y, int n,
 	k++;
       }
     }
-      
-      
+
+
     if (net->h > 0) {
       double **ptr, **endptr=net->theta+net->h;
       k=0;  /* hidden unit */
@@ -1105,7 +1105,7 @@ void cmmhnll(CMM *net, double *x, double *y, int n,
 	}
 	k++;
       }
-	
+
       /* Derivative w/r to hidden layer weights */
       for(k=0;k<net->h;k++){
 	nllgrad[l+k*(net->d+4*net->m)]+=(1-z[k]*z[k])*dldz[k];
@@ -1115,12 +1115,12 @@ void cmmhnll(CMM *net, double *x, double *y, int n,
       }
     }
   }  /* for i loop */
-  
+
 }
 
-/* Create a CMM with hybrid Pareto components from R inputs 
+/* Create a CMM with hybrid Pareto components from R inputs
    and call cmmhnll() */
-void cmmhnllR(double *params,int *d,int *h,int *m, double *x, 
+void cmmhnllR(double *params,int *d,int *h,int *m, double *x,
 	      double *y, int *n, double *nll, double *nllgrad){
   CMM net;
   double **ptr,**endptr;
@@ -1134,14 +1134,14 @@ void cmmhnllR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+4*net.m;
-    }        
+    }
   }
   cmmhnll(&net,x,y,*n,nll,nllgrad);
 }
@@ -1149,9 +1149,9 @@ void cmmhnllR(double *params,int *d,int *h,int *m, double *x,
 
 
 
-/* Create a CMM with hybrid Pareto components from R inputs 
+/* Create a CMM with hybrid Pareto components from R inputs
    and call cmmhfwd() */
-void cmmhfwdR(double *params,int *d,int *h,int *m, double *x, 
+void cmmhfwdR(double *params,int *d,int *h,int *m, double *x,
 	      int *n, double *params_mixt, double *a, double *z){
   CMM net;
   double **ptr,**endptr;
@@ -1165,14 +1165,14 @@ void cmmhfwdR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+4*net.m;
-    }        
+    }
   }
   for(i=0;i<*n;i++)
     cmmhfwd(&net,x+i*net.d,params_mixt+i*4*net.m,a+i*net.nout,z+i*net.h);
@@ -1181,12 +1181,12 @@ void cmmhfwdR(double *params,int *d,int *h,int *m, double *x,
 
 
 /* Hybrid Pareto conditional mixture negative log-likelihood at n points*/
-/* Bimodal penalty mixture (an exponential and a gaussian) with two modes: 
+/* Bimodal penalty mixture (an exponential and a gaussian) with two modes:
    at zero and at mu (must be set)  */
-void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n, 
-			     double *lambda,double *w, double *beta, double *mu, 
+void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
+			     double *lambda,double *w, double *beta, double *mu,
 			     double *sigma, double *nll, double *nllgrad){
-  
+
   double *params, *a, *z, *act, *post, *deltas, *dhdtheta, *dldz;
   int i,j,k,nparams=net->nout*(net->d+1)+net->h*(1+net->d+net->nout);
   double lprob,ppost,pprior,lprior,tailpen,loga,logb;
@@ -1249,13 +1249,13 @@ void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
 	    lprior+=pprior;
 	  }
 	}
-	else 
+	else
 	  post[j]=lprior+act[j];
-	
+
 	if (lprob > post[j])
 	  lprob=lprob + log(1+exp(post[j]-lprob));
 	else
-	  lprob=post[j] + log(1+exp(lprob-post[j]));            
+	  lprob=post[j] + log(1+exp(lprob-post[j]));
       } /* for j */
 
     }
@@ -1263,7 +1263,7 @@ void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
       post[0] = act[0];
       lprob=act[0];
     }
-     
+
     *nll -= lprob;
 
     /* Rprintf("nll[%d] = %f\n",i+1,*nll); */
@@ -1275,9 +1275,9 @@ void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
     for (j=0; j<net->m; j++){
       /* Compute deltas for priors */
       post[j]=exp(post[j]-lprob); /* posterior */
-      
+
       if(j > 0){ /* there are m-1 priors */
-	ppost+=post[j-1];	
+	ppost+=post[j-1];
 	deltas[4*j-1] = (params[j]*ppost-pprior*post[j])/
 	  (pprior+params[j])*(1.0-2*MINPI);
       }
@@ -1293,7 +1293,7 @@ void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
       /* Gradient w/r to the hybrid Pareto parameters */
       hpdfgrad(params[net->m+j], params[2*net->m+j],
 	       params[3*net->m+j], y[i],dhdtheta);
-      
+
       /* Compute deltas for hybrid Pareto parameters */
       deltas[4*j] = (*lambda*tailpen - post[j] *dhdtheta[0])*
 	(1-exp(MINXI-params[net->m+j]));   /* xi_j */
@@ -1301,8 +1301,8 @@ void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
       deltas[4*j+2] = - post[j] * dhdtheta[2]
 	*(1-exp(MINSIGMA-params[3*net->m+j]));	   /* sigma_j */
     } /* for j loop */
-    
-    
+
+
       /* Compute gradient with respect to nn parameters */
     endptrlin=nllgrad+net->nout*(net->d+1);
     j=0;
@@ -1318,8 +1318,8 @@ void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
 	k++;
       }
     }
-      
-      
+
+
     if (net->h > 0) {
       double **ptr, **endptr=net->theta+net->h;
       k=0;  /* hidden unit */
@@ -1337,7 +1337,7 @@ void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
 	}
 	k++;
       }
-	
+
       /* Derivative w/r to hidden layer weights */
       for(k=0;k<net->h;k++){
 	nllgrad[l+k*(net->d+4*net->m)]+=(1-z[k]*z[k])*dldz[k];
@@ -1347,14 +1347,14 @@ void cmmhnll_bimodal_tailpen(CMM *net, double *x, double *y, int n,
       }
     }
   }  /* for i loop */
-  
+
 }
 
-/* Create a CMM with hybrid Pareto components from R inputs 
+/* Create a CMM with hybrid Pareto components from R inputs
    and call cmmhnll_bimodal_tailpen() */
-void cmmhnll_bimodal_tailpenR(double *params,int *d,int *h,int *m, double *x, 
-			      double *y, int *n, double *lambda, double *w, 
-			      double *beta, double *mu, double *sigma, double *nll, 
+void cmmhnll_bimodal_tailpenR(double *params,int *d,int *h,int *m, double *x,
+			      double *y, int *n, double *lambda, double *w,
+			      double *beta, double *mu, double *sigma, double *nll,
 			      double *nllgrad){
   CMM net;
   double **ptr,**endptr;
@@ -1368,21 +1368,21 @@ void cmmhnll_bimodal_tailpenR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+4*net.m;
-    }        
+    }
   }
   cmmhnll_bimodal_tailpen(&net,x,y,*n,lambda,w,beta,mu,sigma,nll,nllgrad);
 }
 
 
 /* Forward propagation through a conditional mixture of hybrid Paretos:
-   prior of the first component determined from the remaining priors. 
+   prior of the first component determined from the remaining priors.
    The priors are constrained to lie in the interval [MINPI, 1-MINPI]
    to ease computations. The first input is the probability of the Dirac */
 void cmmhfwd_dirac(CMM *net, double *x, double *params, double *a, double *z){
@@ -1390,7 +1390,7 @@ void cmmhfwd_dirac(CMM *net, double *x, double *params, double *a, double *z){
   double fprior=1.0;
 
   /* Propagate forward  through nn */
-  nnlin(net, x, a, z);  
+  nnlin(net, x, a, z);
 
   /* First output is the Dirac probability (nout = 4m) */
   params[0] = 1.0/(1.0+exp(-a[0]));
@@ -1399,7 +1399,7 @@ void cmmhfwd_dirac(CMM *net, double *x, double *params, double *a, double *z){
   for(i=net->m;i>0;i--){
     if(i>1){
       /* priors in [0,1] */
-      params[i]=(1.0/(1.0+exp(-a[4*(i-1)]))*(1.0-2.0*MINPI)+MINPI)*fprior;  
+      params[i]=(1.0/(1.0+exp(-a[4*(i-1)]))*(1.0-2.0*MINPI)+MINPI)*fprior;
       fprior=fprior-params[i];
     }
     else
@@ -1411,9 +1411,9 @@ void cmmhfwd_dirac(CMM *net, double *x, double *params, double *a, double *z){
 
 }
 
-/* Create a CMM with hybrid Pareto components from R inputs 
+/* Create a CMM with hybrid Pareto components from R inputs
    and call cmmhfwd_dirac() */
-void cmmhfwd_diracR(double *params,int *d,int *h,int *m, double *x, 
+void cmmhfwd_diracR(double *params,int *d,int *h,int *m, double *x,
 	      int *n, double *params_mixt, double *a, double *z){
   CMM net;
   double **ptr,**endptr;
@@ -1427,14 +1427,14 @@ void cmmhfwd_diracR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   for(i=0;i<*n;i++)
     cmmhfwd_dirac(&net,x+i*net.d,params_mixt+i*(4*net.m+1),a+i*net.nout,z+i*net.h);
@@ -1444,10 +1444,10 @@ void cmmhfwd_diracR(double *params,int *d,int *h,int *m, double *x,
 
 
 /* Hybrid Pareto conditional mixture negative log-likelihood at n points*/
-/* Bimodal penalty mixture (an exponential and a gaussian) with two modes: 
+/* Bimodal penalty mixture (an exponential and a gaussian) with two modes:
    at zero and at 0.2 and delta of Dirac probability of null observation  */
-void cmmhnll_bimodal_tailpen_dirac(CMM *net, double *x, double *y, int n, 
-			     double *lambda,double *w, double *beta, double *mu, 
+void cmmhnll_bimodal_tailpen_dirac(CMM *net, double *x, double *y, int n,
+			     double *lambda,double *w, double *beta, double *mu,
 			     double *sigma, double *nll, double *nllgrad){
 
 
@@ -1502,7 +1502,7 @@ void cmmhnll_bimodal_tailpen_dirac(CMM *net, double *x, double *y, int n,
 	for(j=net->m-2; j>-1; j--){
 	  act[j] = hlogpdf(params[net->m+j+1], params[2*net->m+j+1],
 			   params[3*net->m+j+1],y[i]);
-	  
+
 	  if(j>0){
 	    if(a[4*j]>0){
 	      pprior=-log(1+exp(-a[4*j]));
@@ -1515,49 +1515,49 @@ void cmmhnll_bimodal_tailpen_dirac(CMM *net, double *x, double *y, int n,
 	      lprior+=pprior;
 	    }
 	  }
-	  else 
+	  else
 	    post[j]=lprior+act[j];
-	  
+
 	  if (lprob > post[j])
 	    lprob=lprob + log(1+exp(post[j]-lprob));
 	  else
-	    lprob=post[j] + log(1+exp(lprob-post[j]));            
+	    lprob=post[j] + log(1+exp(lprob-post[j]));
 	} /* for j */
-	
+
       }
       else{ /* just one component */
 	post[0] = act[0];
 	lprob=act[0];
       }
-      
+
       *nll -= (lprob + log(params[0]));
-      
+
       /* Compute gradient for pattern i */
       ppost=0.0; /* Maintains \sum_{i=0}^{j-1} post[i] */
       pprior=0.0; /* Maintains \sum_{i=0}^{j-1} params[i] */
-      
+
       for (j=0; j<net->m; j++){
 	/* Compute deltas for priors */
 	post[j]=exp(post[j]-lprob); /* posterior */
-	
+
 	if(j > 0){ /* there are m-1 priors */
-	  ppost+=post[j-1];	
+	  ppost+=post[j-1];
 	  deltas[4*j] = (params[j+1]*ppost-pprior*post[j])/
 	    (pprior+params[j+1])*(1.0-2*MINPI);
 	}
 	pprior+=params[j+1];
-	
+
 	/* Compute tail penalty together with gradient */
 	loga=log(*w) +log(*beta) - *beta*params[net->m+j+1];
 	logb=log(1-*w)-(params[net->m+j+1]-*mu)*(params[net->m+j+1]-*mu)/(2**sigma**sigma) - M_LN_SQRT_2PI - log(*sigma);
 	*nll -= *lambda*(loga + log(1 + exp(logb-loga)));
 
 	tailpen= *beta + ((params[net->m+j+1]-*mu)/(*sigma**sigma)-*beta)/(exp(loga-logb)+1);
-	
+
 	/* Gradient w/r to the hybrid Pareto parameters */
 	hpdfgrad(params[net->m+j+1], params[2*net->m+j+1],
 		 params[3*net->m+j+1], y[i],dhdtheta);
-	
+
 	/* Compute deltas for hybrid Pareto parameters */
 	deltas[4*j+1] = (*lambda*tailpen - post[j] *dhdtheta[0])*
 	  (1.0-exp(MINXI-params[net->m+j+1]));   /* xi_j */
@@ -1570,14 +1570,14 @@ void cmmhnll_bimodal_tailpen_dirac(CMM *net, double *x, double *y, int n,
       deltas[0] = params[0]-1.0;
     } /* positive observation condition */
     else { /* null observation (Dirac probability) */
-      *nll -= log(1.0-params[0]); 
+      *nll -= log(1.0-params[0]);
       deltas[0] = params[0];
       for (j=1; j<net->nout; j++)
 	deltas[j] = 0.0;
     }
-    
+
     /* Rprintf("nll[%d] = %f\n",i+1,*nll); */
-       
+
       /* Compute gradient with respect to nn parameters */
     endptrlin=nllgrad+net->nout*(net->d+1);
     j=0;
@@ -1593,8 +1593,8 @@ void cmmhnll_bimodal_tailpen_dirac(CMM *net, double *x, double *y, int n,
 	k++;
       }
     }
-      
-      
+
+
     if (net->h > 0) {
       double **ptr, **endptr=net->theta+net->h;
       k=0;  /* hidden unit */
@@ -1612,7 +1612,7 @@ void cmmhnll_bimodal_tailpen_dirac(CMM *net, double *x, double *y, int n,
 	}
 	k++;
       }
-	
+
       /* Derivative w/r to hidden layer weights */
       for(k=0;k<net->h;k++){
 	nllgrad[l+k*(net->d+net->nout+1)]+=(1-z[k]*z[k])*dldz[k];
@@ -1622,14 +1622,14 @@ void cmmhnll_bimodal_tailpen_dirac(CMM *net, double *x, double *y, int n,
       }
     }
   }  /* for i loop */
-  
+
 }
 
-/* Create a CMM with hybrid Pareto components from R inputs 
+/* Create a CMM with hybrid Pareto components from R inputs
    and call cmmhnll_bimodal_tailpen_dirac() */
-void cmmhnll_bimodal_tailpen_diracR(double *params,int *d,int *h,int *m, double *x, 
-			      double *y, int *n, double *lambda, double *w, 
-			      double *beta, double *mu, double *sigma, double *nll, 
+void cmmhnll_bimodal_tailpen_diracR(double *params,int *d,int *h,int *m, double *x,
+			      double *y, int *n, double *lambda, double *w,
+			      double *beta, double *mu, double *sigma, double *nll,
 			      double *nllgrad){
   CMM net;
   double **ptr,**endptr;
@@ -1643,14 +1643,14 @@ void cmmhnll_bimodal_tailpen_diracR(double *params,int *d,int *h,int *m, double 
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   cmmhnll_bimodal_tailpen_dirac(&net,x,y,*n,lambda,w,beta,mu,sigma,nll,nllgrad);
 }
@@ -1671,7 +1671,7 @@ void cmmhnll_dirac(CMM *net, double *x, double *y, int n, double *nll){
   a = (double*) R_alloc(net->nout, sizeof(double));
   z = (double*) R_alloc(net->h, sizeof(double));
   act = (double*) R_alloc(net->m, sizeof(double));
-  post = (double*) R_alloc(net->m, sizeof(double)); 
+  post = (double*) R_alloc(net->m, sizeof(double));
 
   /* Make sure initialization of neg-log-like and its gradient
      is zero */
@@ -1705,7 +1705,7 @@ void cmmhnll_dirac(CMM *net, double *x, double *y, int n, double *nll){
 	for(j=net->m-2; j>-1; j--){
 	  act[j] = hlogpdf(params[net->m+j+1], params[2*net->m+j+1],
 			   params[3*net->m+j+1],y[i]);
-	  
+
 	  if(j>0){
 	    if(a[4*j]>0){
 	      pprior=-log(1+exp(-a[4*j]));
@@ -1718,36 +1718,36 @@ void cmmhnll_dirac(CMM *net, double *x, double *y, int n, double *nll){
 	      lprior+=pprior;
 	    }
 	  }
-	  else 
+	  else
 	    post[j]=lprior+act[j];
-	  
+
 	  if (lprob > post[j])
 	    lprob=lprob + log(1+exp(post[j]-lprob));
 	  else
-	    lprob=post[j] + log(1+exp(lprob-post[j]));            
+	    lprob=post[j] + log(1+exp(lprob-post[j]));
 	} /* for j */
-	
+
       }
       else{ /* just one component */
 	post[0] = act[0];
 	lprob=act[0];
       }
-      
+
       *nll -= (lprob + log(params[0]));
-                 
+
     } /* positive observation condition */
     else { /* null observation (Dirac probability) */
-      *nll -= log(1.0-params[0]); 
+      *nll -= log(1.0-params[0]);
     }
-    
+
   }  /* for i loop */
-  
+
 }
 
 
-/* Create a CMM with hybrid Pareto components from R inputs 
+/* Create a CMM with hybrid Pareto components from R inputs
    and call cmmhnll_dirac() */
-void cmmhnll_diracR(double *params,int *d,int *h,int *m, double *x, 
+void cmmhnll_diracR(double *params,int *d,int *h,int *m, double *x,
 			      double *y, int *n, double *nll){
   CMM net;
   double **ptr,**endptr;
@@ -1761,23 +1761,23 @@ void cmmhnll_diracR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   cmmhnll_dirac(&net,x,y,*n,nll);
 }
 
 
 
-/* Create a CMM with  hybrid Pareto components from R inputs 
+/* Create a CMM with  hybrid Pareto components from R inputs
    and perform quantile computations */
-void cmmhquant(double *theta,int *d,int *h,int *m, double *x, 
+void cmmhquant(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -1794,14 +1794,14 @@ void cmmhquant(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+4*net.m;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(4*net.m,sizeof(double));
@@ -1813,7 +1813,7 @@ void cmmhquant(double *theta,int *d,int *h,int *m, double *x,
     cmmhfwd(&net,x+i*net.d,params,act,z);
     for(j=0;j<*nq;j++)
       /*mexPrintf("q[%d] = %f\n",j+1,q[j]); */
-      ummquant(ummhcdf,ummhpdf,params,net.m,q[j],a,b,tol,itmax,xq+j+i**nq); 
+      ummquant(ummhcdf,ummhpdf,params,net.m,q[j],a,b,tol,itmax,xq+j+i**nq);
   }
 
 }
@@ -1821,7 +1821,7 @@ void cmmhquant(double *theta,int *d,int *h,int *m, double *x,
 
 /* Create a CMM with hybrid Pareto components truncated below zero
    from R inputs and perform quantile computations */
-void cmmhquant_trunc(double *theta,int *d,int *h,int *m, double *x, 
+void cmmhquant_trunc(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -1839,14 +1839,14 @@ void cmmhquant_trunc(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+4*net.m;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(4*net.m,sizeof(double));
@@ -1859,7 +1859,7 @@ void cmmhquant_trunc(double *theta,int *d,int *h,int *m, double *x,
     F0=ummhcdf(params,net.m,0.0);
     for(j=0;j<*nq;j++)
       /*mexPrintf("q[%d] = %f\n",j+1,q[j]); */
-      ummquant(ummhcdf,ummhpdf,params,net.m,q[j]*(1.0-F0),a,b,tol,itmax,xq+j+i**nq); 
+      ummquant(ummhcdf,ummhpdf,params,net.m,q[j]*(1.0-F0),a,b,tol,itmax,xq+j+i**nq);
   }
 
 }
@@ -1867,7 +1867,7 @@ void cmmhquant_trunc(double *theta,int *d,int *h,int *m, double *x,
 
 /* Create a CMM with hybrid Pareto components truncated below zero
    and one Dirac at zero from R inputs and perform quantile computations */
-void cmmhquant_dirac(double *theta,int *d,int *h,int *m, double *x, 
+void cmmhquant_dirac(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -1885,14 +1885,14 @@ void cmmhquant_dirac(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(net.nout+1,sizeof(double));
@@ -1908,7 +1908,7 @@ void cmmhquant_dirac(double *theta,int *d,int *h,int *m, double *x,
       if (q[j] > 1.0-params[0]){
 	F0=ummhcdf(params_cmmh,net.m,0.0);
 	/*Rprintf("F0 = %f\n",F0);*/
-	ummquant(ummhcdf,ummhpdf,params_cmmh,net.m,((q[j]-1.0)/params[0]+1.0)*(1.0-F0)+F0,a,b,tol,itmax,xq+j+i**nq); 
+	ummquant(ummhcdf,ummhpdf,params_cmmh,net.m,((q[j]-1.0)/params[0]+1.0)*(1.0-F0)+F0,a,b,tol,itmax,xq+j+i**nq);
       } else
 	xq[j+i**nq]=0.0;
     }
@@ -1917,10 +1917,10 @@ void cmmhquant_dirac(double *theta,int *d,int *h,int *m, double *x,
 }
 
 
-/* Create a CMM with hybrid Pareto components truncated below zero and 
-   one Dirac at zero from R inputs and perform conditional quantile 
+/* Create a CMM with hybrid Pareto components truncated below zero and
+   one Dirac at zero from R inputs and perform conditional quantile
    computations */
-void cmmhcquant_dirac(double *theta,int *d,int *h,int *m, double *x, 
+void cmmhcquant_dirac(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -1938,14 +1938,14 @@ void cmmhcquant_dirac(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(net.nout+1,sizeof(double));
@@ -1959,7 +1959,7 @@ void cmmhcquant_dirac(double *theta,int *d,int *h,int *m, double *x,
     params_cmmh = params+1;
     F0=ummhcdf(params_cmmh,net.m,0.0);
     for(j=0;j<*nq;j++){
-      ummquant(ummhcdf,ummhpdf,params_cmmh,net.m,q[j]*(1.0-F0)+F0,a,b,tol,itmax,xq+j+i**nq); 
+      ummquant(ummhcdf,ummhpdf,params_cmmh,net.m,q[j]*(1.0-F0)+F0,a,b,tol,itmax,xq+j+i**nq);
     }
 
   }
@@ -1978,13 +1978,13 @@ void cmmgfwd(CMM *net, double *x, double *params, double *a, double *z){
   double fprior=1.0;
 
   /* Propagate forward  through nn */
-  nnlin(net, x, a, z);  
+  nnlin(net, x, a, z);
 
   /* Apply transfer functions to nn outputs. */
   for(i=net->m-1;i>-1;i--){
     if(i>0){
       /* priors in [0,1] */
-      params[i]=(1.0/(1.0+exp(-a[3*i-1]))*(1.0-2.0*MINPI)+MINPI)*fprior;  
+      params[i]=(1.0/(1.0+exp(-a[3*i-1]))*(1.0-2.0*MINPI)+MINPI)*fprior;
       fprior=fprior-params[i];
     }
     else
@@ -1998,7 +1998,7 @@ void cmmgfwd(CMM *net, double *x, double *params, double *a, double *z){
 
 
 /* Gaussian conditional mixture negative log-likelihood at n points*/
-void cmmgnll(CMM *net, double *x, double *y, int n, 
+void cmmgnll(CMM *net, double *x, double *y, int n,
 	       double *nll, double *nllgrad){
   double *params, *a, *z, *act, *post, *deltas, *dldz;
   int i,j,k,nparams=net->nout*(net->d+1)+net->h*(1+net->d+net->nout);
@@ -2013,13 +2013,13 @@ void cmmgnll(CMM *net, double *x, double *y, int n,
   post = (double*) R_alloc(net->m, sizeof(double));
   deltas = (double*) R_alloc(net->nout, sizeof(double));
   dldz = (double*) R_alloc(net->h, sizeof(double));
-  
+
 
   /* Make sure initialization of neg-log-like and its gradient
      is zero */
   *nll=0.0;
   for(j=0;j<nparams;j++)
-    nllgrad[j]=0; 
+    nllgrad[j]=0;
 
   for (i=0; i<n; i++){
     /* Get nn outputs, hidden unit activations and mixture parameters for
@@ -2055,15 +2055,15 @@ void cmmgnll(CMM *net, double *x, double *y, int n,
 	  lprior+=pprior;
 	}
       }
-      else 
+      else
 	post[j]=lprior+act[j];
-      
+
       if (lprob > post[j])
 	lprob=lprob + log(1+exp(post[j]-lprob));
       else
-	lprob=post[j] + log(1+exp(lprob-post[j]));            
+	lprob=post[j] + log(1+exp(lprob-post[j]));
     } /* for j */
-    
+
     *nll -= lprob;
     /* Compute gradient for pattern i */
     ppost=0.0; /* Maintains \sum_{i=0}^{j-1} post[i] */
@@ -2071,24 +2071,24 @@ void cmmgnll(CMM *net, double *x, double *y, int n,
     for (j=0; j<net->m; j++){
       /* Compute deltas for priors */
       post[j]=exp(post[j]-lprob); /* posterior */
-      
+
       if(j > 0){ /* there are m-1 priors */
-	ppost+=post[j-1];	
+	ppost+=post[j-1];
 	deltas[3*j-1] = (params[j]*ppost-pprior*post[j])/
 	  (pprior+params[j])*(1.0-2.0*MINPI);
       }
       pprior+=params[j];
-            
+
       /* Compute deltas for the Gaussian parameters */
       deltas[3*j] = - post[j] * /* mu_j */
-	(y[i]-params[net->m+j])/(params[2*net->m+j]*params[2*net->m+j]); 
+	(y[i]-params[net->m+j])/(params[2*net->m+j]*params[2*net->m+j]);
       deltas[3*j+1] = - post[j]/params[2*net->m+j] *
 	((y[i]-params[net->m+j])*(y[i]-params[net->m+j])/
 	 (params[2*net->m+j]*params[2*net->m+j])-1)
 	*(1-exp(MINSIGMA-params[2*net->m+j]));	   /* sigma_j */
     } /* for j loop */
-    
-    
+
+
       /* Compute gradient with respect to nn parameters */
     endptrlin=nllgrad+net->nout*(net->d+1);
     j=0;
@@ -2104,8 +2104,8 @@ void cmmgnll(CMM *net, double *x, double *y, int n,
 	k++;
       }
     }
-      
-      
+
+
     if (net->h > 0) {
       double **ptr, **endptr=net->theta+net->h;
       k=0;  /* hidden unit */
@@ -2123,7 +2123,7 @@ void cmmgnll(CMM *net, double *x, double *y, int n,
 	}
 	k++;
       }
-      
+
       /* Derivative w/r to hidden layer weights */
       for(k=0;k<net->h;k++){
 	nllgrad[l+k*(net->d+net->nout+1)]+=(1-z[k]*z[k])*dldz[k];
@@ -2132,13 +2132,13 @@ void cmmgnll(CMM *net, double *x, double *y, int n,
 	    x[i*net->d+j];
       }
     }
-  }  /* for i loop */  
+  }  /* for i loop */
 }
 
 
-/* Create a CMM with Gaussian components from R inputs 
+/* Create a CMM with Gaussian components from R inputs
    and call cmmgnll() */
-void cmmgnllR(double *params,int *d,int *h,int *m, double *x, 
+void cmmgnllR(double *params,int *d,int *h,int *m, double *x,
 	      double *y, int *n, double *nll, double *nllgrad){
   CMM net;
   double **ptr,**endptr;
@@ -2152,23 +2152,23 @@ void cmmgnllR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   cmmgnll(&net,x,y,*n,nll,nllgrad);
 }
 
 
 
-/* Create a CMM with Gaussian components from R inputs 
+/* Create a CMM with Gaussian components from R inputs
    and perform quantile computations */
-void cmmgquant(double *theta,int *d,int *h,int *m, double *x, 
+void cmmgquant(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -2185,14 +2185,14 @@ void cmmgquant(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(3*net.m,sizeof(double));
@@ -2203,14 +2203,14 @@ void cmmgquant(double *theta,int *d,int *h,int *m, double *x,
   for (i=0;i<*n;i++){
     cmmgfwd(&net,x+i*net.d,params,act,z);
     for(j=0;j<*nq;j++)
-      ummquant(ummgcdf,ummgpdf,params,net.m,q[j],a,b,tol,itmax,xq+j+i**nq); 
+      ummquant(ummgcdf,ummgpdf,params,net.m,q[j],a,b,tol,itmax,xq+j+i**nq);
   }
 
 }
 
 /* Create a CMM with Gaussian components truncated below zero
    from R inputs and perform quantile computations */
-void cmmgquant_trunc(double *theta,int *d,int *h,int *m, double *x, 
+void cmmgquant_trunc(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -2228,14 +2228,14 @@ void cmmgquant_trunc(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(3*net.m,sizeof(double));
@@ -2247,15 +2247,15 @@ void cmmgquant_trunc(double *theta,int *d,int *h,int *m, double *x,
     cmmgfwd(&net,x+i*net.d,params,act,z);
     F0=ummgcdf(params,net.m,0.0);
     for(j=0;j<*nq;j++)
-      ummquant(ummgcdf,ummgpdf,params,net.m,q[j]*(1.0-F0),a,b,tol,itmax,xq+j+i**nq); 
+      ummquant(ummgcdf,ummgpdf,params,net.m,q[j]*(1.0-F0),a,b,tol,itmax,xq+j+i**nq);
   }
 
 }
 
 
-/* Create a CMM with Gaussian components from R inputs 
+/* Create a CMM with Gaussian components from R inputs
    and call cmmgfwd() */
-void cmmgfwdR(double *params,int *d,int *h,int *m, double *x, 
+void cmmgfwdR(double *params,int *d,int *h,int *m, double *x,
 	      int *n, double *params_mixt, double *a, double *z){
   CMM net;
   double **ptr,**endptr;
@@ -2269,14 +2269,14 @@ void cmmgfwdR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   for(i=0;i<*n;i++)
     cmmgfwd(&net,x+i*net.d,params_mixt+i*3*net.m,a+i*net.nout,z+i*net.h);
@@ -2284,7 +2284,7 @@ void cmmgfwdR(double *params,int *d,int *h,int *m, double *x,
 
 
 /* Forward propagation through a conditional mixture of Gaussians:
-   prior of the first component determined from the remaining priors. 
+   prior of the first component determined from the remaining priors.
    The priors are constrained to lie in the interval [MINPI, 1-MINPI]
    to ease computations. The first input is the probability of the Dirac */
 void cmmgfwd_dirac(CMM *net, double *x, double *params, double *a, double *z){
@@ -2292,7 +2292,7 @@ void cmmgfwd_dirac(CMM *net, double *x, double *params, double *a, double *z){
   double fprior=1.0;
 
   /* Propagate forward  through nn */
-  nnlin(net, x, a, z);  
+  nnlin(net, x, a, z);
 
   /* First output is the Dirac probability (nout = 3m) */
   params[0] = 1.0/(1.0+exp(-a[0]));
@@ -2301,7 +2301,7 @@ void cmmgfwd_dirac(CMM *net, double *x, double *params, double *a, double *z){
   for(i=net->m;i>0;i--){
     if(i>1){
       /* priors in [0,1] */
-      params[i]=(1.0/(1.0+exp(-a[3*(i-1)]))*(1.0-2.0*MINPI)+MINPI)*fprior;  
+      params[i]=(1.0/(1.0+exp(-a[3*(i-1)]))*(1.0-2.0*MINPI)+MINPI)*fprior;
       fprior=fprior-params[i];
     }
     else
@@ -2313,9 +2313,9 @@ void cmmgfwd_dirac(CMM *net, double *x, double *params, double *a, double *z){
 }
 
 
-/* Create a CMM with Gaussian components from R inputs 
+/* Create a CMM with Gaussian components from R inputs
    and call cmmgfwd_dirac() */
-void cmmgfwd_diracR(double *params,int *d,int *h,int *m, double *x, 
+void cmmgfwd_diracR(double *params,int *d,int *h,int *m, double *x,
 	      int *n, double *params_mixt, double *a, double *z){
   CMM net;
   double **ptr,**endptr;
@@ -2329,14 +2329,14 @@ void cmmgfwd_diracR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   for(i=0;i<*n;i++)
     cmmgfwd_dirac(&net,x+i*net.d,params_mixt+i*(3*net.m+1),a+i*net.nout,z+i*net.h);
@@ -2346,7 +2346,7 @@ void cmmgfwd_diracR(double *params,int *d,int *h,int *m, double *x,
 
 /* Gaussian conditional mixture negative log-likelihood at n points*/
 /* First component is a delta Dirac for the probability of null observation*/
-void cmmgnll_dirac(CMM *net, double *x, double *y, int n, 
+void cmmgnll_dirac(CMM *net, double *x, double *y, int n,
 	       double *nll, double *nllgrad){
   double *params, *a, *z, *act, *post, *deltas, *dldz;
   int i,j,k,nparams=net->nout*(net->d+1)+net->h*(1+net->d+net->nout);
@@ -2361,7 +2361,7 @@ void cmmgnll_dirac(CMM *net, double *x, double *y, int n,
   post = (double*) R_alloc(net->m, sizeof(double));
   deltas = (double*) R_alloc(net->nout, sizeof(double));
   dldz = (double*) R_alloc(net->h, sizeof(double));
-  
+
 
   /* Make sure initialization of neg-log-like and its gradient
      is zero */
@@ -2404,16 +2404,16 @@ void cmmgnll_dirac(CMM *net, double *x, double *y, int n,
 	    lprior+=pprior;
 	  }
 	}
-	else 
+	else
 	  post[j]=lprior+act[j];
-      
+
       if (lprob > post[j])
 	lprob=lprob + log(1+exp(post[j]-lprob));
       else
-	lprob=post[j] + log(1+exp(lprob-post[j]));            
+	lprob=post[j] + log(1+exp(lprob-post[j]));
     } /* for j */
 
-      
+
       *nll -= (lprob+ log(params[0]));
 
       /* Compute gradient for pattern i */
@@ -2424,7 +2424,7 @@ void cmmgnll_dirac(CMM *net, double *x, double *y, int n,
 	post[j]=exp(post[j]-lprob); /* posterior */
 
 	if(j > 0){ /* there are m-1 priors */
-	  ppost+=post[j-1];	
+	  ppost+=post[j-1];
 	  deltas[3*j] = (params[j+1]*ppost-pprior*post[j])/
 	    (pprior+params[j+1])*(1.0-2.0*MINPI);
 	}
@@ -2433,23 +2433,23 @@ void cmmgnll_dirac(CMM *net, double *x, double *y, int n,
 
 	/* Compute deltas for the Gaussian parameters */
 	deltas[3*j+1] = - post[j] * /* mu_j */
-	  (y[i]-params[net->m+j+1])/(params[2*net->m+j+1]*params[2*net->m+j+1]); 
+	  (y[i]-params[net->m+j+1])/(params[2*net->m+j+1]*params[2*net->m+j+1]);
 	deltas[3*j+2] = - post[j]/params[2*net->m+j+1] *
 	  ((y[i]-params[net->m+j+1])*(y[i]-params[net->m+j+1])/
 	   (params[2*net->m+j+1]*params[2*net->m+j+1])-1)
 	  *(1-exp(MINSIGMA-params[2*net->m+j+1]));	   /* sigma_j */
       } /* for j loop */
-      
+
       /* Delta for the Dirac parameter */
       deltas[0] = params[0]-1.0;
     }/* positive observation condition */
     else { /* null observation (Dirac probability) */
-      *nll -= log(1.0-params[0]); 
+      *nll -= log(1.0-params[0]);
       deltas[0] = params[0];
       for (j=1; j<net->nout; j++)
 	deltas[j] = 0.0;
     }
-    
+
     /* Compute gradient with respect to nn parameters */
     endptrlin=nllgrad+net->nout*(net->d+1);
     j=0;
@@ -2465,7 +2465,7 @@ void cmmgnll_dirac(CMM *net, double *x, double *y, int n,
 	k++;
       }
     }
-        
+
     if (net->h > 0) {
       double **ptr, **endptr=net->theta+net->h;
       k=0;  /* hidden unit */
@@ -2483,7 +2483,7 @@ void cmmgnll_dirac(CMM *net, double *x, double *y, int n,
 	}
 	k++;
       }
-      
+
       /* Derivative w/r to hidden layer weights */
       for(k=0;k<net->h;k++){
 	nllgrad[l+k*(net->d+net->nout+1)]+=(1-z[k]*z[k])*dldz[k];
@@ -2492,15 +2492,15 @@ void cmmgnll_dirac(CMM *net, double *x, double *y, int n,
 	    x[i*net->d+j];
       }
     }
-  } /* for i loop */ 
-}  
+  } /* for i loop */
+}
 
 
 
 
-/* Create a CMM with Gaussian components from R inputs 
+/* Create a CMM with Gaussian components from R inputs
    and call cmmgnll_dirac() */
-void cmmgnll_diracR(double *params,int *d,int *h,int *m, double *x, 
+void cmmgnll_diracR(double *params,int *d,int *h,int *m, double *x,
 		    double *y, int *n, double *nll,double *nllgrad){
   CMM net;
   double **ptr,**endptr;
@@ -2514,22 +2514,22 @@ void cmmgnll_diracR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   cmmgnll_dirac(&net,x,y,*n,nll,nllgrad);
 }
 
 
-/* Create a CMM with Gaussian components truncated below zero 
+/* Create a CMM with Gaussian components truncated below zero
    and one Dirac at zero from R inputs and perform quantile computations */
-void cmmgquant_dirac(double *theta,int *d,int *h,int *m, double *x, 
+void cmmgquant_dirac(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -2547,14 +2547,14 @@ void cmmgquant_dirac(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(net.nout+1,sizeof(double));
@@ -2568,7 +2568,8 @@ void cmmgquant_dirac(double *theta,int *d,int *h,int *m, double *x,
     params_cmmg = params+1;
     for(j=0;j<*nq;j++){
       if (q[j] > 1.0-params[0]){
-	ummquant(ummgcdf,ummgpdf,params_cmmg,net.m,((q[j]-1.0)/params[0]+1.0)*(1.0-F0)+F0,a,b,tol,itmax,xq+j+i**nq); 
+	F0=ummgcdf(params_cmmg,net.m,0.0);
+	ummquant(ummgcdf,ummgpdf,params_cmmg,net.m,((q[j]-1.0)/params[0]+1.0)*(1.0-F0)+F0,a,b,tol,itmax,xq+j+i**nq);
       } else
 	xq[j+i**nq]=0.0;
     }
@@ -2578,9 +2579,9 @@ void cmmgquant_dirac(double *theta,int *d,int *h,int *m, double *x,
 
 
 /* Create a CMM with Gaussian components truncated below zero
-   and one Dirac at zero from R inputs and perform conditional 
+   and one Dirac at zero from R inputs and perform conditional
    quantile computations */
-void cmmgcquant_dirac(double *theta,int *d,int *h,int *m, double *x, 
+void cmmgcquant_dirac(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -2598,14 +2599,14 @@ void cmmgcquant_dirac(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(net.nout+1,sizeof(double));
@@ -2617,16 +2618,17 @@ void cmmgcquant_dirac(double *theta,int *d,int *h,int *m, double *x,
   for (i=0;i<*n;i++){
     cmmgfwd_dirac(&net,x+i*net.d,params,out,z);
     params_cmmg = params+1;
+    F0=ummgcdf(params_cmmg,net.m,0.0);
     for(j=0;j<*nq;j++){
-      ummquant(ummgcdf,ummgpdf,params_cmmg,net.m,q[j]*(1.0-F0)+F0,a,b,tol,itmax,xq+j+i**nq); 
-    }    
+      ummquant(ummgcdf,ummgpdf,params_cmmg,net.m,q[j]*(1.0-F0)+F0,a,b,tol,itmax,xq+j+i**nq);
+    }
   }
 }
 
 
 /* Log-Normal conditional mixture negative log-likelihood at n points*/
 /* First component is a delta Dirac for the probability of null observation*/
-void cmmlnll_dirac(CMM *net, double *x, double *y, int n, 
+void cmmlnll_dirac(CMM *net, double *x, double *y, int n,
 		   double *nll, double *nllgrad){
   double *params, *a, *z, *act, *post, *deltas, *dldz;
   int i,j,k,nparams=net->nout*(net->d+1)+net->h*(1+net->d+net->nout);
@@ -2641,7 +2643,7 @@ void cmmlnll_dirac(CMM *net, double *x, double *y, int n,
   post = (double*) R_alloc(net->m, sizeof(double));
   deltas = (double*) R_alloc(net->nout, sizeof(double));
   dldz = (double*) R_alloc(net->h, sizeof(double));
-  
+
 
   /* Make sure initialization of neg-log-like and its gradient
      is zero */
@@ -2684,16 +2686,16 @@ void cmmlnll_dirac(CMM *net, double *x, double *y, int n,
 	    lprior+=pprior;
 	  }
 	}
-	else 
+	else
 	  post[j]=lprior+act[j];
-      
+
       if (lprob > post[j])
 	lprob=lprob + log(1+exp(post[j]-lprob));
       else
-	lprob=post[j] + log(1+exp(lprob-post[j]));            
+	lprob=post[j] + log(1+exp(lprob-post[j]));
     } /* for j */
 
-      
+
       *nll -= (lprob+ log(params[0]));
 
       /* Compute gradient for pattern i */
@@ -2704,7 +2706,7 @@ void cmmlnll_dirac(CMM *net, double *x, double *y, int n,
 	post[j]=exp(post[j]-lprob); /* posterior */
 
 	if(j > 0){ /* there are m-1 priors */
-	  ppost+=post[j-1];	
+	  ppost+=post[j-1];
 	  deltas[3*j] = (params[j+1]*ppost-pprior*post[j])/
 	    (pprior+params[j+1])*(1.0-2.0*MINPI);
 	}
@@ -2713,23 +2715,23 @@ void cmmlnll_dirac(CMM *net, double *x, double *y, int n,
 
 	/* Compute deltas for the Gaussian parameters */
 	deltas[3*j+1] = - post[j] * /* mu_j */
-	  (log(y[i])-params[net->m+j+1])/(params[2*net->m+j+1]*params[2*net->m+j+1]); 
+	  (log(y[i])-params[net->m+j+1])/(params[2*net->m+j+1]*params[2*net->m+j+1]);
 	deltas[3*j+2] = - post[j]/params[2*net->m+j+1] *
 	  ((log(y[i])-params[net->m+j+1])*(log(y[i])-params[net->m+j+1])/
 	   (params[2*net->m+j+1]*params[2*net->m+j+1])-1)
 	  *(1-exp(MINSIGMA-params[2*net->m+j+1]));	   /* sigma_j */
       } /* for j loop */
-      
+
       /* Delta for the Dirac parameter */
       deltas[0] = params[0]-1.0;
     }/* positive observation condition */
     else { /* null observation (Dirac probability) */
-      *nll -= log(1.0-params[0]); 
+      *nll -= log(1.0-params[0]);
       deltas[0] = params[0];
       for (j=1; j<net->nout; j++)
 	deltas[j] = 0.0;
     }
-    
+
     /* Compute gradient with respect to nn parameters */
     endptrlin=nllgrad+net->nout*(net->d+1);
     j=0;
@@ -2745,7 +2747,7 @@ void cmmlnll_dirac(CMM *net, double *x, double *y, int n,
 	k++;
       }
     }
-        
+
     if (net->h > 0) {
       double **ptr, **endptr=net->theta+net->h;
       k=0;  /* hidden unit */
@@ -2763,7 +2765,7 @@ void cmmlnll_dirac(CMM *net, double *x, double *y, int n,
 	}
 	k++;
       }
-      
+
       /* Derivative w/r to hidden layer weights */
       for(k=0;k<net->h;k++){
 	nllgrad[l+k*(net->d+net->nout+1)]+=(1-z[k]*z[k])*dldz[k];
@@ -2772,15 +2774,15 @@ void cmmlnll_dirac(CMM *net, double *x, double *y, int n,
 	    x[i*net->d+j];
       }
     }
-  } /* for i loop */ 
-}  
+  } /* for i loop */
+}
 
 
 
 
-/* Create a CMM with Log-Normal components from R inputs 
+/* Create a CMM with Log-Normal components from R inputs
    and call cmmlnll_dirac() */
-void cmmlnll_diracR(double *params,int *d,int *h,int *m, double *x, 
+void cmmlnll_diracR(double *params,int *d,int *h,int *m, double *x,
 		    double *y, int *n, double *nll,double *nllgrad){
   CMM net;
   double **ptr,**endptr;
@@ -2794,22 +2796,22 @@ void cmmlnll_diracR(double *params,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   cmmlnll_dirac(&net,x,y,*n,nll,nllgrad);
 }
 
 
-/* Create a CMM with LogNormal components and one Dirac at zero from 
+/* Create a CMM with LogNormal components and one Dirac at zero from
    R inputs and perform quantile computations */
-void cmmlquant_dirac(double *theta,int *d,int *h,int *m, double *x, 
+void cmmlquant_dirac(double *theta,int *d,int *h,int *m, double *x,
 	       int *n, double *q, int *nq, double *a, double *b,
 	       double *xq){
   CMM net;
@@ -2826,14 +2828,14 @@ void cmmlquant_dirac(double *theta,int *d,int *h,int *m, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
 
   double *params = (double *) R_alloc(net.nout+1,sizeof(double));
@@ -2866,10 +2868,9 @@ void cmmlquant_dirac(double *theta,int *d,int *h,int *m, double *x,
    The first input is the probability of success of the Bernouilli, then scale (theta)
    and shape (gamma) parameters of the Gamma distribution. */
 void cmmbergam_fwd(CMM *net, double *x, double *params, double *a, double *z){
-  int i;
 
   /* Propagate forward  through nn */
-  nnlin(net, x, a, z);  
+  nnlin(net, x, a, z);
 
   /* First output is the probability of success of the Bernouilli */
   params[0] = 1.0/(1.0+exp(-a[0]));
@@ -2880,9 +2881,9 @@ void cmmbergam_fwd(CMM *net, double *x, double *params, double *a, double *z){
 }
 
 
-/* Create a CMM for a Bernouilli-Gamma mixture from R inputs 
+/* Create a CMM for a Bernouilli-Gamma mixture from R inputs
    and call cmmbergam_fwd() */
-void cmmbergam_fwdR(double *params,int *d,int *h, double *x, 
+void cmmbergam_fwdR(double *params,int *d,int *h, double *x,
 	      int *n, double *params_bergam, double *a, double *z){
   CMM net;
   double **ptr,**endptr;
@@ -2896,14 +2897,14 @@ void cmmbergam_fwdR(double *params,int *d,int *h, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   for(i=0;i<*n;i++)
     cmmbergam_fwd(&net,x+i*net.d,params_bergam+i*net.nout,a+i*net.nout,z+i*net.h);
@@ -2911,7 +2912,7 @@ void cmmbergam_fwdR(double *params,int *d,int *h, double *x,
 
 
 /* Bernouilli-Gamma conditional mixture negative log-likelihood at n points*/
-void cmmbergam_nll(CMM *net, double *x, double *y, int n, double *nll, 
+void cmmbergam_nll(CMM *net, double *x, double *y, int n, double *nll,
 		   double *nllgrad){
 
 
@@ -2937,24 +2938,24 @@ void cmmbergam_nll(CMM *net, double *x, double *y, int n, double *nll,
      pattern i */
     cmmbergam_fwd(net,x+i*net->d,params,a,z);
 
-    if (y[i] > 0){ /* positive obs. (it rained that day) */      
+    if (y[i] > 0){ /* positive obs. (it rained that day) */
       *nll -= ((params[1]-1.0)*log(y[i]) - params[1]*log(params[2]) - lgammafn(params[1])
 	       - y[i]/params[2] + log(params[0]));
-      
+
       deltas[0] = params[0]-1.0; /* Delta for the Dirac parameter */
       deltas[1] = (digamma(params[1])-log(y[i]/params[2]))*(1-exp(MINSIGMA-params[1]));
       deltas[2] = (params[1] - y[i]/params[2])*(1-exp(MINSIGMA-params[2]))/params[2];
 
     } /* positive observation condition */
     else { /* null observation  */
-      *nll -= log(1.0-params[0]); 
+      *nll -= log(1.0-params[0]);
       deltas[0] = params[0];
       deltas[1] = 0.0;
       deltas[2] = 0.0;
     }
-    
+
     /* Rprintf("nll[%d] = %f\n",i+1,*nll); */
-       
+
       /* Compute gradient with respect to nn parameters */
     endptrlin=nllgrad+net->nout*(net->d+1);
     j=0;
@@ -2970,7 +2971,7 @@ void cmmbergam_nll(CMM *net, double *x, double *y, int n, double *nll,
 	k++;
       }
     }
-            
+
     if (net->h > 0) {
       double **ptr, **endptr=net->theta+net->h;
       k=0;  /* hidden unit */
@@ -2988,7 +2989,7 @@ void cmmbergam_nll(CMM *net, double *x, double *y, int n, double *nll,
 	}
 	k++;
       }
-	
+
       /* Derivative w/r to hidden layer weights */
       for(k=0;k<net->h;k++){
 	nllgrad[l+k*(net->d+net->nout+1)]+=(1-z[k]*z[k])*dldz[k];
@@ -2998,13 +2999,13 @@ void cmmbergam_nll(CMM *net, double *x, double *y, int n, double *nll,
       }
     }
   }  /* for i loop */
-  
+
 }
 
 
-/* Create a CMM for a Bernouilli-Gamma mixture from R inputs 
+/* Create a CMM for a Bernouilli-Gamma mixture from R inputs
    and call cmmbergam_nll() */
-void cmmbergam_nllR(double *params,int *d,int *h, double *x, 
+void cmmbergam_nllR(double *params,int *d,int *h, double *x,
 		    double *y, int *n, double *nll,double *nllgrad){
   CMM net;
   double **ptr,**endptr;
@@ -3018,14 +3019,14 @@ void cmmbergam_nllR(double *params,int *d,int *h, double *x,
   net.s=0;
 
   if(net.h > 0){
-    /* if so, we need to split the parameter vector into 
+    /* if so, we need to split the parameter vector into
        the linear and non-linear part */
     l = net.nout*(net.d+1); /* start of non-linear part */
     endptr=net.theta+net.h;
     for(ptr=net.theta;ptr<endptr;ptr++){
       *ptr=net.psi+l;
       l+=net.d+net.nout+1;
-    }        
+    }
   }
   cmmbergam_nll(&net,x,y,*n,nll,nllgrad);
 }

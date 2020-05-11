@@ -20,8 +20,10 @@ kept. This helps avoiding local minima.
 }
 \usage{
 condhparetomixt.train(h, m, x, y, nstart = 1, ...)
-condhparetomixt.train.tailpen(h,m,x,y,lambda=0,w=0.2,beta=50,mu=0.2,sigma=0.2, nstart = 1, ...)
-condhparetomixt.dirac.train.tailpen(h,m,x,y,lambda=0,w=0.2,beta=50,mu=0.2,sigma=0.2, nstart = 1, ...)
+condhparetomixt.train.tailpen(h,m,x,y,lambda=0,w=0.2,beta=50,
+                              mu=0.2,sigma=0.2, nstart = 1, ...)
+condhparetomixt.dirac.train.tailpen(h,m,x,y,lambda=0,w=0.2,beta=50,
+                                   mu=0.2,sigma=0.2, nstart = 1, ...)
 condgaussmixt.train(h,m,x,y, nstart = 1, ...)
 condgaussmixt.dirac.train(h,m,x,y, nstart = 1, ...)
 condlognormixt.train(h,m,x,y, nstart = 1, ...)

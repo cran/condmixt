@@ -15,8 +15,14 @@ softplus <- function(x){
     y
 }
 
-softplusinv <- function(y){
-  log(exp(y)-1)
+softplusinv <- function (y)
+{
+    x <- rep(NaN, length(y))
+    if (any(y > 100))
+        x[y>100] <- y
+    if (any(y <= 100))
+        x[y<=100] <- log(exp(y[y<=100]) - 1)
+    x
 }
 
 lambertw <- function(z){
